@@ -1,5 +1,5 @@
 import pandas as pd
-import datetime
+from datetime import datetime
 import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -129,7 +129,7 @@ def preprocess_data(data, only_X=False):
     "flat_model_Premium Apartment Loft", "flat_model_Simplified", "flat_model_Standard", "flat_model_Terrace", 
     "flat_model_Type S1", "flat_model_Type S2", "floor_area_sqm", "month", "lease_commence_date", 
     "remaining_lease", "latitude", "longitude"]
-    
+
     # Retain only the columns that are in 'columns_needed'
     X = X[[col for col in X.columns if col in columns_needed]]
 
