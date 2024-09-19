@@ -61,7 +61,7 @@ def predict(month=None,
 
     # Send POST request with the payload to the deployed Model API
     response = requests.post(
-        url=f"http://localhost:{port_number}/predict",
+        url=f"http://flask-api:{port_number}/predict",
         data=payload,
         headers={"Content-Type": "application/json"},
     )
