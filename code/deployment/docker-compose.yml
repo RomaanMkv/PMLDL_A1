@@ -1,0 +1,18 @@
+services:
+  flask-api:
+    build:
+      context: ../..  # Go back two directories to find the Dockerfile
+      dockerfile: code/deployment/api/Dockerfile  # Assuming the first Dockerfile is named 'Dockerfile'
+    ports:
+      - "5001:5155"
+    environment:
+      - FLASK_APP=code/deployment/api/api.py
+
+  gradio-app:
+    build:
+      context: ../..  # Go back two directories to find the Dockerfile
+      dockerfile: code/deployment/app/Dockerfile  # Assuming the second Dockerfile is also named 'Dockerfile'
+    ports:
+      - "5155:5155"
+    depends_on:
+      - flask-api  # Ensure the Flask API starts before Gradio
