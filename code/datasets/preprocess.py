@@ -7,7 +7,7 @@ from sklearn.compose import ColumnTransformer
 import os
 import pickle
 
-def preprocess_data(data, only_X=False, scaler_path=None):
+def preprocess_data(data, only_X=False, prep_path=None):
 
     def convert_time_columns(df):
         reference_date = datetime.strptime("1966-01-01", "%Y-%m-%d")
@@ -83,39 +83,40 @@ def preprocess_data(data, only_X=False, scaler_path=None):
     categorical_transformer = Pipeline(steps=[
         ('onehot', OneHotEncoder(sparse_output=False))
     ])
-
-    # load scaler
-    if scaler_path and os.path.exists(scaler_path):
-        # Load existing StandardScaler
-        with open(scaler_path, 'rb') as file:
-            scaler = pickle.load(file)
-    else:
-        # Create a new StandardScaler
-        scaler = StandardScaler()
     
     # Pipeline for numeric features
     numeric_transformer = Pipeline(steps=[
-        ('scaler', scaler)
+        ('scaler', StandardScaler())
     ])
     
     # Combine all transformations
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('cat', categorical_transformer, categorical_features),
-            ('num', numeric_transformer, numeric_features),
-        ],
-        remainder='passthrough'
-    )
+    flag = False
+    if prep_path and os.path.exists(prep_path):
+        # Load existing StandardScaler
+        with open(prep_path, 'rb') as file:
+            preprocessor = pickle.load(file)
+            flag = True
+    else:
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('cat', categorical_transformer, categorical_features),
+                ('num', numeric_transformer, numeric_features),
+            ],
+            remainder='passthrough'
+        )
     
-            
     if not only_X:
         X = data.drop(columns=["resale_price"])
         y = data[["resale_price"]]
     else:
         X = data
         y = None
-    
-    X_transformed = preprocessor.fit_transform(X)
+
+    if flag:
+        X_transformed = preprocessor.transform(X)
+    else:
+        X_transformed = preprocessor.fit_transform(X)
+
     transformed_columns = (
         preprocessor.transformers_[0][1].named_steps['onehot'].get_feature_names_out(categorical_features).tolist() +
         numeric_features
@@ -144,10 +145,12 @@ def preprocess_data(data, only_X=False, scaler_path=None):
         if col not in X.columns:
             X[col] = 0
     
+    X = X[columns_needed]
+    
     # save standard scaler
-    if scaler_path:
-        with open(scaler_path, 'wb') as file:
-            pickle.dump(scaler, file)
+    if prep_path:
+        with open(prep_path, 'wb') as file:
+            pickle.dump(preprocessor, file)
     
     # Apply transformations
     X = X.fillna(X.mean())

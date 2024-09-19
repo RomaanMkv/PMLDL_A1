@@ -1,5 +1,8 @@
 import gradio as gr
-from ...datasets import transform_data
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from datasets.preprocess import preprocess_data
 import json
 import requests
 import pandas as pd
@@ -46,11 +49,13 @@ def predict(month=None,
     raw_df = pd.DataFrame(features, index=[0])
     
     # Transform the input data
-    X = transform_data(df=raw_df)
+    prep_path = 'data/prep.pkl'
+    X, _ = preprocess_data(data=raw_df, prep_path=prep_path, only_X=True)
     
     # Convert to JSON
-    example = X.iloc[0,:]
+    example = X.iloc[0]
     example = json.dumps(example.to_dict())
+    print('Example', example)
 
     payload = example
 
@@ -76,7 +81,7 @@ def validate_month_format(month):
 demo = gr.Interface(
     fn=predict,
     inputs=[
-        gr.Textbox(label="Month", placeholder="YYYY-MM", validate=validate_month_format), 
+        gr.Textbox(label="Month", placeholder="YYYY-MM"), 
         gr.Dropdown(label="Town", choices=['SEMBAWANG', 'PUNGGOL', 'BUKIT BATOK', 'TOA PAYOH', 'QUEENSTOWN',
        'TAMPINES', 'YISHUN', 'CLEMENTI', 'WOODLANDS', 'HOUGANG',
        'JURONG WEST', 'PASIR RIS', 'BUKIT PANJANG', 'BUKIT MERAH',
