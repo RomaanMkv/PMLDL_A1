@@ -14,7 +14,8 @@ raw_data = pd.read_csv('data/flat-prices.csv')
 raw_data = raw_data.head(100)
 print("Loaded raw data from 'data/flat-prices.csv'")
 
-X, y = preprocess_data(raw_data)
+scaler_path = 'data/scaler.pkl'
+X, y = preprocess_data(raw_data, scaler_path=scaler_path)
 y = np.array(y).ravel()
 print("Data preprocessing completed")
 
@@ -45,7 +46,7 @@ best_model = grid_search.best_estimator_
 print("Best model identified")
 
 # Save the best model
-artifact_path = "basic_gb.pkl"
+artifact_path = "models/basic_gb.pkl"
 joblib.dump(best_model, artifact_path)
 print(f"Model saved to {artifact_path}")
 

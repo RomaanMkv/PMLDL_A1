@@ -2,3 +2,6 @@ ipykernel
 numpy
 pandas
 scikit-learn
+flask
+gradio
+requests

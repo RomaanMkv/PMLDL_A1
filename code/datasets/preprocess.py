@@ -7,7 +7,7 @@ from sklearn.compose import ColumnTransformer
 import os
 import pickle
 
-def preprocess_data(data, only_X=False):
+def preprocess_data(data, only_X=False, scaler_path=None):
 
     def convert_time_columns(df):
         reference_date = datetime.strptime("1966-01-01", "%Y-%m-%d")
@@ -85,7 +85,13 @@ def preprocess_data(data, only_X=False):
     ])
 
     # load scaler
-    scaler = StandardScaler()
+    if scaler_path and os.path.exists(scaler_path):
+        # Load existing StandardScaler
+        with open(scaler_path, 'rb') as file:
+            scaler = pickle.load(file)
+    else:
+        # Create a new StandardScaler
+        scaler = StandardScaler()
     
     # Pipeline for numeric features
     numeric_transformer = Pipeline(steps=[
@@ -137,6 +143,11 @@ def preprocess_data(data, only_X=False):
     for col in columns_needed:
         if col not in X.columns:
             X[col] = 0
+    
+    # save standard scaler
+    if scaler_path:
+        with open(scaler_path, 'wb') as file:
+            pickle.dump(scaler, file)
     
     # Apply transformations
     X = X.fillna(X.mean())
