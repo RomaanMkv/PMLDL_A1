@@ -111,6 +111,5 @@ The machine learning model used in this project is a GradientBoostingRegressor. 
 ### Model Performance
 
 After training, the model achieved the following metrics:
-- **MAE (Mean Absolute Error)**: 12,000 S$
-- **MSE (Mean Squared Error)**: 300,000,000 S$
-- **R² Score**: 0.85
+- **MAE (Mean Absolute Error)**: 26,500 S$
+- **R² Score**: 0.95
