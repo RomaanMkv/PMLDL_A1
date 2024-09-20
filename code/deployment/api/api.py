@@ -7,6 +7,7 @@ port_number = 5001
 
 artifact_path = "models/basic_gb.pkl"
 
+
 # Load the model from the specified directory
 model = joblib.load(artifact_path)
 
@@ -14,9 +15,15 @@ app = Flask(__name__)
 
 @app.route("/info", methods=["GET"])
 def info():
-    # Get model metadata
-    metadata = model.metadata.to_dict()
-    response = make_response(jsonify(metadata), 200)
+    # Get model details, such as best parameters from the GridSearch
+    grid_search_path = "models/grid_search.pkl"
+    grid_search = joblib.load(grid_search_path)
+    model_info = {
+        'model': 'GradientBoostingRegressor',
+        'best_params': grid_search.best_params_,
+        'best_score': grid_search.best_score_,
+    }
+    response = make_response(jsonify(model_info), 200)
     response.content_type = "application/json"
     return response
 
