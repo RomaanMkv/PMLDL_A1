@@ -81,7 +81,7 @@ def preprocess_data(data, only_X=False, prep_path=None):
     
     # Pipeline for categorical features
     categorical_transformer = Pipeline(steps=[
-        ('onehot', OneHotEncoder(sparse_output=False))
+        ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore'))
     ])
     
     # Pipeline for numeric features
