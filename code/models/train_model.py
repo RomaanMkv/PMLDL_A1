@@ -11,9 +11,10 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
 # Load and preprocess data
-raw_data = pd.read_csv('data/flat-prices.csv')
-raw_data = raw_data.head(100)
-print("Loaded raw data from 'data/flat-prices.csv'")
+raw_data = pd.read_csv('data/train_flat-prices.csv')
+# for faster training process
+raw_data = raw_data.head(10000)
+print("Loaded raw data from 'data/train_flat-prices.csv'")
 
 prep_path = 'data/prep.pkl'
 X, y = preprocess_data(data=raw_data, prep_path=prep_path)
